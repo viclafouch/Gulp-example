@@ -92,9 +92,6 @@ else {
 	});
 }
 
-gulp.task('default', ['scripts']);
-
-
 var scripts = [], x;
 for (var i = 0; i < libJs.length; i++) {
 	x = libJs[i];
@@ -104,10 +101,12 @@ for (var i = 0; i < libJs.length; i++) {
 		} else {
 			scripts.push(pathLibJs+'/'+x+'/*.js');
 		}
+
+		if (i == libJs.length) {
+			scripts.push(assetsPath+jsPath+'/min/*.js');
+		}
 	});
 }
-
-scripts.push(assetsPath+jsPath+'/min/*.js');
 
 gulp.task('concat__JS', function() {
   gulp.src(scripts)
@@ -119,10 +118,9 @@ gulp.task('scripts', function() {
 	runSequence('myJs','concat__JS');
 });
 
-// /*----------  Live  ----------*/
+gulp.task('watch', function() {
+	gulp.watch(assetsPath+scssPath+'/*.scss', ['css']);
+	gulp.watch(assetsPath+jsPath+'/*.js', ['scripts']);
+});
 
-// // Watch task
-// gulp.task('watch', function() {
-// 	gulp.watch('./assets/scss/*.scss', ['styles']);
-// 	gulp.watch('./assets/js/*.js', ['scripts']);
-// });
+gulp.task('default', ['scripts', 'watch']);
