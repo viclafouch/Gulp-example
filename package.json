@@ -4,19 +4,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  /*Keywords*/
   "keywords": [],
-  /*Your name*/
   "author": "",
   "license": "ISC",
-  /*Repo Link*/
   "bugs": {
     "url": "/issues"
   },
-  /*Readme Link http://...#readme */
   "homepage": "#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "gulp-sourcemaps": "2.6.1",
     "babel-preset-es2015": "^6.24.1",
     "browserslist": "^2.9.0",
     "gulp": "^3.9.1",
