@@ -6,16 +6,19 @@ cleanCSS = require('gulp-clean-css'),
 uglify = require('gulp-uglify'),
 sourcemaps = require('gulp-sourcemaps'),
 babel = require('gulp-babel'),
+livereload = require('gulp-livereload'),
 concat = require('gulp-concat'),
 about = require('gulp-about'),
 print = require('gulp-print'),
 inject = require('gulp-inject'),
 gutil = require('gulp-util'),
+gulpFancyMeta = require('gulp-fancy-meta'),
 runSequence = require('run-sequence'),
 fs = require('fs'),
 mkdirp = require('mkdirp');
 
 runSequence.options.ignoreUndefinedTasks = true;
+livereload({ start: true })
 
 // Set true if you're in production
 const inProduction = false;
@@ -166,23 +169,28 @@ for (var i = 0; i < libJs.length; i++) {
 gulp.task('concatJS', function() {
 	gulp.src(scripts)
 		.pipe(concat(jsFileName+'.min.js'))
-		.pipe(gulp.dest(jsPath));
+		.pipe(gulp.dest(jsPath))
+		.pipe(livereload());
 });
 
 gulp.task('index', function () {
-	if (fs.existsSync('index.html')) {
-	    // Do something
-	} else {
+	// if (fs.existsSync('index.html')) {
+	//     // Do something
+	// } else {
 		var target = gulp.src('template/index.html');
-		var sources = gulp.src([jsPath+'/'+jsFileName+'.min.js', cssPath+'/styles.min.css'], { read: false } );
+		var sources = gulp.src([jsPath+'/'+jsFileName+'.min.js', cssPath+'/styles.min.css'], { read: false, addRootSlash: false });
 	
-		return target.pipe(inject(sources))
+		return target
+		.pipe(inject(sources), { 
+			addRootSlash: false,
+			relative: true
+		})
 		.pipe(gulp.dest(''));
-	}
+	// }
 });
 
 gulp.task('general', function() {
-	runSequence('css', 'js','concatJS', 'index', 'about', 'watch');
+	runSequence('css', 'js','concatJS', 'index', 'about');
 });
 
 gulp.task('scripts', function() {
@@ -190,6 +198,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('watch', function() {
+	livereload.listen();
 	gulp.watch(scssPath+'/*.scss', ['css']);
 	gulp.watch(jsPath+'/'+jsFileName+'.js', ['scripts']);
 });

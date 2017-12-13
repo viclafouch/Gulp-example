@@ -23,6 +23,7 @@
     "gulp-compass": "^2.1.0",
     "gulp-concat": "^2.6.1",
     "gulp-inject": "^4.3.0",
+    "gulp-livereload": "^3.8.1",
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "2.6.1",
