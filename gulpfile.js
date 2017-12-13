@@ -9,6 +9,7 @@ babel = require('gulp-babel'),
 concat = require('gulp-concat'),
 about = require('gulp-about'),
 print = require('gulp-print'),
+inject = require('gulp-inject'),
 gutil = require('gulp-util'),
 runSequence = require('run-sequence'),
 fs = require('fs'),
@@ -17,10 +18,10 @@ mkdirp = require('mkdirp');
 runSequence.options.ignoreUndefinedTasks = true;
 
 // Set true if you're in production
-const inProduction = true;
+const inProduction = false;
 
 // Your JS lib
-var libJs = ['gdxg'];
+var libJs = [];
 
 // Your assets folder path
 var assetsPath = 'assets';
@@ -29,7 +30,7 @@ var assetsPath = 'assets';
 const libName = 'lib';
 
 // Your script file name
-const JsFileName = 'app';
+const jsFileName = 'app';
 
 // Your assets folder's name
 const jsFolder = 'js';
@@ -102,10 +103,10 @@ gulp.task('about', function () {
         .pipe(gulp.dest(''));
 });
 
-if (fs.existsSync(jsPath+'/'+JsFileName+'.js')) {
+if (fs.existsSync(jsPath+'/'+jsFileName+'.js')) {
     // Do something
 } else {
-	fs.writeFile(jsPath+'/'+JsFileName+'.js', "// console.log('test')", function(err) {
+	fs.writeFile(jsPath+'/'+jsFileName+'.js', "// Script app", function(err) {
 	    if(err) {
 	        return console.log(err);
 	    }
@@ -114,7 +115,7 @@ if (fs.existsSync(jsPath+'/'+JsFileName+'.js')) {
 
 if (!inProduction) {
 	gulp.task('js', function() {
-		return gulp.src(jsPath+'/'+JsFileName+'.js')
+		return gulp.src(jsPath+'/'+jsFileName+'.js')
 			.pipe(sourcemaps.init())
 	 		.pipe(babel({
 	            presets: ['es2015']
@@ -132,7 +133,7 @@ if (!inProduction) {
 
 else {
 	gulp.task('js', function() {
-		return gulp.src(jsPath+'/'+JsFileName+'.js')
+		return gulp.src(jsPath+'/'+jsFileName+'.js')
 			.pipe(sourcemaps.init())
 			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(jsPath))
@@ -149,22 +150,39 @@ for (var i = 0; i < libJs.length; i++) {
 	fs.access(libName+'/'+x, fs.constants.R_OK | fs.constants.W_OK, (err) => {
 		if (err) {
 			console.log(libName+'/'+x);
-			console.warn('Directory doesn\'t exist '+err.path);
+			console.warn('Library '+x+' doesn\'t exist '+err.path);
 		} else {
 			scripts.push(libName+'/'+x+'/*.js');
 			console.log(scripts);
 		}
 
 		if (i == libJs.length) {
-			scripts.push(jsPath+'/'+JsFileName+'.min.js');
+			scripts.push(jsPath+'/'+jsFileName+'.min.js');
 		}
 	});
 }
 
+
 gulp.task('concatJS', function() {
-  gulp.src(scripts)
-    .pipe(concat(JsFileName+'.min.js'))
-    .pipe(gulp.dest(jsPath));
+	gulp.src(scripts)
+		.pipe(concat(jsFileName+'.min.js'))
+		.pipe(gulp.dest(jsPath));
+});
+
+gulp.task('index', function () {
+	if (fs.existsSync('index.html')) {
+	    // Do something
+	} else {
+		var target = gulp.src('template/index.html');
+		var sources = gulp.src([jsPath+'/'+jsFileName+'.min.js', cssPath+'/styles.min.css'], { read: false } );
+	
+		return target.pipe(inject(sources))
+		.pipe(gulp.dest(''));
+	}
+});
+
+gulp.task('general', function() {
+	runSequence('css', 'js','concatJS', 'index', 'about', 'watch');
 });
 
 gulp.task('scripts', function() {
@@ -173,7 +191,7 @@ gulp.task('scripts', function() {
 
 gulp.task('watch', function() {
 	gulp.watch(scssPath+'/*.scss', ['css']);
-	gulp.watch(jsPath+'/'+JsFileName+'.js', ['scripts']);
+	gulp.watch(jsPath+'/'+jsFileName+'.js', ['scripts']);
 });
 
-gulp.task('default', ['css', 'scripts', 'about']);
+gulp.task('default', ['general']);
