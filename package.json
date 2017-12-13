@@ -10,7 +10,6 @@
   "bugs": {
     "url": "/issues"
   },
-  "version": "1.0",
   "homepage": "#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
