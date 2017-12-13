@@ -7,7 +7,9 @@ uglify = require('gulp-uglify'),
 sourcemaps = require('gulp-sourcemaps'),
 babel = require('gulp-babel'),
 concat = require('gulp-concat'),
+about = require('gulp-about'),
 print = require('gulp-print'),
+gutil = require('gulp-util'),
 runSequence = require('run-sequence'),
 fs = require('fs'),
 mkdirp = require('mkdirp');
@@ -15,13 +17,10 @@ mkdirp = require('mkdirp');
 runSequence.options.ignoreUndefinedTasks = true;
 
 // Set true if you're in production
-const inProduction = false;
-
-// Need Turbolinks ?
-var turbolinks = false;
+const inProduction = true;
 
 // Your JS lib
-var libJs = [];
+var libJs = ['gdxg'];
 
 // Your assets folder path
 var assetsPath = 'assets';
@@ -29,8 +28,8 @@ var assetsPath = 'assets';
 // Your lib folder's name;
 const libName = 'lib';
 
-// Your lib path;
-const pathLibJs = '';
+// Your script file name
+const JsFileName = 'app';
 
 // Your assets folder's name
 const jsFolder = 'js';
@@ -47,11 +46,6 @@ const scssPath = assetsPath+'/'+scssFolder;
 const imgPath = assetsPath+'/'+imgFolder;
 
 const paths = [jsPath, cssPath, scssPath, imgPath];
-
-// Verif if user check turbolinks
-if (turbolinks) {
-	libJs = ['turbolinks'];
-}
 
 // Creat assets' folder
 mkdirp(assetsPath, function(err) { 
@@ -97,69 +91,89 @@ gulp.task('css', function() {
     	.pipe(gulp.dest(cssPath));
 });
 
-// /*----------  Scripts  ----------*/
+gulp.task('about', function () {
+    return gulp.src('package.json')
+        .pipe(about({
+            keys: ['name', 'version', 'author', 'description'],
+            inject: {
+                buildDate: Date.now()
+            }
+        }))
+        .pipe(gulp.dest(''));
+});
 
-// if (!inProduction) {
-// 	gulp.task('myJs', function() {
-// 		return gulp.src(assetsPath+jsPath+'/*.js')
-// 			.pipe(sourcemaps.init())
-// 	 		.pipe(babel({
-// 	            presets: ['es2015']
-// 	        }))
-// 			.pipe(uglify().on('error', function(e){
-// 		         console.log(e);
-// 		    }))
-// 			.pipe(rename({ suffix: '.min' }))
-// 			.pipe(gulp.dest(assetsPath+jsPath+'/min'))
+if (fs.existsSync(jsPath+'/'+JsFileName+'.js')) {
+    // Do something
+} else {
+	fs.writeFile(jsPath+'/'+JsFileName+'.js', "// console.log('test')", function(err) {
+	    if(err) {
+	        return console.log(err);
+	    }
+	});
+}
 
-// 			.pipe(print(function(filepath) {
-// 		      return "file created : " + filepath;
-// 		    }))
-// 	});
-// }
+if (!inProduction) {
+	gulp.task('js', function() {
+		return gulp.src(jsPath+'/'+JsFileName+'.js')
+			.pipe(sourcemaps.init())
+	 		.pipe(babel({
+	            presets: ['es2015']
+	        }))
+			.pipe(uglify().on('error', function(e){
+		         console.log(e);
+		    }))
+			.pipe(rename({ suffix: '.min' }))
+			.pipe(gulp.dest(jsPath))
+			.pipe(print(function(filepath) {
+		      return "file created : " + filepath;
+		    }))
+	});
+}
 
-// else {
-// 	gulp.task('myJs', function() {
-// 		return gulp.src(assetsPath+jsPath+'/*.js')
-// 			.pipe(sourcemaps.init())
-// 			.pipe(rename({ suffix: '.min' }))
-// 			.pipe(gulp.dest(assetsPath+jsPath+'/min'))
+else {
+	gulp.task('js', function() {
+		return gulp.src(jsPath+'/'+JsFileName+'.js')
+			.pipe(sourcemaps.init())
+			.pipe(rename({ suffix: '.min' }))
+			.pipe(gulp.dest(jsPath))
+			.pipe(print(function(filepath) {
+		      return "file created : " + filepath;
+		    }))
+	});
+}
 
-// 			.pipe(print(function(filepath) {
-// 		      return "file created : " + filepath;
-// 		    }))
-// 	});
-// }
+var scripts = [], x;
 
-// var scripts = [], x;
-// for (var i = 0; i < libJs.length; i++) {
-// 	x = libJs[i];
-// 	fs.access(pathLibJs+'/'+libJs[i], fs.constants.R_OK | fs.constants.W_OK, (err) => {
-// 		if (err) {
-// 			console.warn('Directory doesn\'t exist '+err.path);
-// 		} else {
-// 			scripts.push(pathLibJs+'/'+x+'/*.js');
-// 		}
+for (var i = 0; i < libJs.length; i++) {
+	x = libJs[i];
+	fs.access(libName+'/'+x, fs.constants.R_OK | fs.constants.W_OK, (err) => {
+		if (err) {
+			console.log(libName+'/'+x);
+			console.warn('Directory doesn\'t exist '+err.path);
+		} else {
+			scripts.push(libName+'/'+x+'/*.js');
+			console.log(scripts);
+		}
 
-// 		if (i == libJs.length) {
-// 			scripts.push(assetsPath+jsPath+'/min/*.js');
-// 		}
-// 	});
-// }
+		if (i == libJs.length) {
+			scripts.push(jsPath+'/'+JsFileName+'.min.js');
+		}
+	});
+}
 
-// gulp.task('concat__JS', function() {
-//   gulp.src(scripts)
-//     .pipe(concat(scriptFile))
-//     .pipe(gulp.dest(assetsPath+jsPath+'/min'));
-// });
+gulp.task('concatJS', function() {
+  gulp.src(scripts)
+    .pipe(concat(JsFileName+'.min.js'))
+    .pipe(gulp.dest(jsPath));
+});
 
-// gulp.task('scripts', function() {
-// 	runSequence('myJs','concat__JS');
-// });
+gulp.task('scripts', function() {
+	runSequence('js','concatJS');
+});
 
 gulp.task('watch', function() {
 	gulp.watch(scssPath+'/*.scss', ['css']);
-	gulp.watch(jsPath+'/*.js', ['scripts']);
+	gulp.watch(jsPath+'/'+JsFileName+'.js', ['scripts']);
 });
 
-gulp.task('default', ['css', 'watch']);
+gulp.task('default', ['css', 'scripts', 'about']);
