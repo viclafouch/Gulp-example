@@ -139,8 +139,12 @@ const imgPath = assetsPath+'/'+imgFolder;
 const paths = [jsPath, cssPath, scssPath, imgPath];
 
 // Creat assets' folder
-mkdirp(assetsPath, function(err) { 
-    gutil.log(err);
+mkdirp(assetsPath, function(err) {
+	if (err) {
+ 		gutil.log('An error occurred during creation of folder !');
+ 		gutil.log('----------Error below----------');
+ 		gutil.log(err);
+	}
 });
 
 mkdirp('lib', function(err) {});
@@ -148,6 +152,11 @@ mkdirp('lib', function(err) {});
 // Creat subFolders to assets folder
 for (var i = paths.length - 1; i >= 0; i--) {
 	mkdirp(paths[i], function(err) { 
+		if (err) {
+	 		gutil.log('An error occurred during creation of folder !');
+	 		gutil.log('----------Error below----------');
+	 		gutil.log(err);
+		}
 	});
 }
 
@@ -156,9 +165,11 @@ if (fs.existsSync(scssPath+'/styles.scss')) {
     // Do something
 } else {
 	fs.writeFile(scssPath+'/styles.scss', "", function(err) {
-	    if(err) {
-	        return gutil.log(err);
-	    }
+	    if (err) {
+	 		gutil.log('An error occurred during creation of scss file !');
+	 		gutil.log('----------Error below----------');
+	 		gutil.log(err);
+		}
 	});
 }
 
@@ -170,9 +181,11 @@ gulp.task('css', function() {
 		 	css: cssPath,
 			sass: scssPath,
 		}))
-		.on('error', function(error) {
-	      console.log(error);
-	      this.emit('end');
+		.on('error', function(err) {
+	    	gutil.log('An error occurred during compress to css file !');
+	 		gutil.log('----------Error below----------');
+	 		gutil.log(err);
+	      	this.emit('end');
 	    })
 	    .pipe(print(function(filepath) {
 	      return "file created : " + filepath;
@@ -198,8 +211,10 @@ gulp.task('about', function () {
 	if (fs.existsSync('about.json')) {
 		fs.unlinkSync('about.json');
 	}
+	
 	var t = new Date();
 	t = t.toString();
+
     return gulp.src('package.json')
         .pipe(about({
             keys: [
@@ -220,7 +235,9 @@ if (fs.existsSync(jsPath+'/'+jsFileName+'.js')) {
 } else {
 	fs.writeFile(jsPath+'/'+jsFileName+'.js', "// Script app", function(err) {
 	    if(err) {
-	        return console.log(err);
+	        gutil.log('An error occurred during creation of js file !');
+	 		gutil.log('----------Error below----------');
+	 		gutil.log(err);
 	    }
 	});
 }
@@ -232,8 +249,10 @@ if (!inDev) {
 	 		.pipe(babel({
 	            presets: ['es2015']
 	        }))
-			.pipe(uglify().on('error', function(e){
-		         console.log(e);
+			.pipe(uglify().on('error', function(err){
+	         	gutil.log('An error occurred during compressed js');
+	 			gutil.log('----------Error below----------');
+	 			gutil.log(err);
 		    }))
 			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(jsPath))
