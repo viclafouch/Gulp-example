@@ -12,6 +12,7 @@ about = require('gulp-about'),
 print = require('gulp-print'),
 inject = require('gulp-inject'),
 gutil = require('gulp-util'),
+jeditor = require("gulp-json-editor"),
 runSequence = require('run-sequence'),
 fs = require('fs'),
 mkdirp = require('mkdirp');
@@ -25,6 +26,13 @@ const inProduction = false;
 
 // Your JS lib
 var libJs = [];
+
+// Your json package
+var jsonData = {
+	'description': '',
+	'version': '',
+	'author': '' 
+}
 
 // Your assets folder path
 var assetsPath = 'assets';
@@ -99,9 +107,15 @@ gulp.task('css', function() {
 });
 
 gulp.task('about', function () {
+	fs.unlinkSync('about.json');
     return gulp.src('package.json')
         .pipe(about({
-            keys: ['name', 'version', 'author', 'description'],
+            keys: [
+	            'name', 
+	            'version', 
+	            'author', 
+	            'description'
+            ],
             inject: {
                 buildDate: Date.now()
             }
@@ -173,6 +187,16 @@ gulp.task('concatJS', function() {
 		.pipe(livereload());
 });
 
+gulp.task('jsonNew', () => {
+	gulp.src("package.json")
+  	.pipe(jeditor({
+    	'version': jsonData.version,
+    	'description': jsonData.description,
+    	'author': jsonData.author,
+  	}))
+  	.pipe(gulp.dest(""));
+}); 
+
 gulp.task('index', function () {
 	if (fs.existsSync('index.html')) {
 	    // Do something
@@ -193,7 +217,7 @@ gulp.task('html', function() {
 });
 
 gulp.task('general', function() {
-	runSequence('css', 'js','concatJS', 'index', 'about', 'watch');
+	runSequence('css', 'js','concatJS', 'index', 'jsonNew', 'about', 'watch');
 });
 
 gulp.task('scripts', function() {
