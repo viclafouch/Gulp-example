@@ -1,16 +1,25 @@
 /*
 
-	Gulp example
+	=======* Gulp Example *=======
 
 	Welcome to configuration of Gulp example
 
-	Follow the instructions of theses differents options. Don't forget to use *npm install*. NodeJS is required
+	Follow the instructions. Don't forget to use *npm install*. 
+
+	NodeJS, Ruby and Compass are required.
+
+	Please be sure to have these 3 requirements
+
+		- Install NodeJs : https://nodejs.org/en/download/
+		- Install Ruby : https://www.ruby-lang.org/en/downloads/
+		- Install Compass : http://compass-style.org/install/
+
+		If you want to have an autorefresh on your browser, you need livereload
+		==> http://livereload.com/extensions/ and choose your browser
 
 	Description:
-	The createComment(data) method must return a new Comment node with its data set to data and node document set to the context object.
 
-	URL doc:
-	https://github.com/viclafouch/Gulpfile
+	URL doc: https://github.com/viclafouch/Gulpfile
 
 */
 
@@ -29,6 +38,13 @@
 */
 const inDev = true;
 
+/* Your javascript lib folder's name
+@Options : {
+	String
+}
+*/
+const libName = 'lib';
+
 /* Your Javascript library's name
 @Options : {
 	array of strings
@@ -45,13 +61,6 @@ const libJs = [];
 }
 */
 const assetsPath = 'assets';
-
-/* Your javascript lib folder's name
-@Options : {
-	String
-}
-*/
-const libName = 'lib';
 
 /* Your script file name
 @Options : {
