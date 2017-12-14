@@ -17,7 +17,8 @@ fs = require('fs'),
 mkdirp = require('mkdirp');
 
 runSequence.options.ignoreUndefinedTasks = true;
-// livereload({ start: true })
+
+livereload({ start: true })
 
 // Set true if you're in production
 const inProduction = false;
@@ -52,8 +53,10 @@ const paths = [jsPath, cssPath, scssPath, imgPath];
 
 // Creat assets' folder
 mkdirp(assetsPath, function(err) { 
-    console.log(err);
+    gutil.log(err);
 });
+
+mkdirp('lib', function(err) {});
 
 // Creat subFolders to assets folder
 for (var i = paths.length - 1; i >= 0; i--) {
@@ -67,7 +70,7 @@ if (fs.existsSync(scssPath+'/styles.scss')) {
 } else {
 	fs.writeFile(scssPath+'/styles.scss', "", function(err) {
 	    if(err) {
-	        return console.log(err);
+	        return gutil.log(err);
 	    }
 	});
 }
@@ -91,7 +94,8 @@ gulp.task('css', function() {
     	.pipe(gulp.dest(cssPath))
     	.pipe(rename({ suffix: '.min' }))
     	.pipe(cleanCSS({compatibility: 'ie8'}))
-    	.pipe(gulp.dest(cssPath));
+    	.pipe(gulp.dest(cssPath))
+    	.pipe(livereload());
 });
 
 gulp.task('about', function () {
@@ -151,11 +155,9 @@ for (var i = 0; i < libJs.length; i++) {
 	x = libJs[i];
 	fs.access(libName+'/'+x, fs.constants.R_OK | fs.constants.W_OK, (err) => {
 		if (err) {
-			console.log(libName+'/'+x);
-			console.warn('Library '+x+' doesn\'t exist '+err.path);
+			gutil.log('Library '+x+' doesn\'t exist '+err.path);
 		} else {
 			scripts.push(libName+'/'+x+'/*.js');
-			console.log(scripts);
 		}
 
 		if (i == libJs.length) {
@@ -164,11 +166,11 @@ for (var i = 0; i < libJs.length; i++) {
 	});
 }
 
-
 gulp.task('concatJS', function() {
 	gulp.src(scripts)
 		.pipe(concat(jsFileName+'.min.js'))
 		.pipe(gulp.dest(jsPath))
+		.pipe(livereload());
 });
 
 gulp.task('index', function () {
@@ -184,17 +186,29 @@ gulp.task('index', function () {
 	}
 });
 
+gulp.task('html', function() {
+    return gulp.src('index.html')
+        .pipe(gulp.dest(''))
+        .pipe(livereload());
+});
+
 gulp.task('general', function() {
-	runSequence('css', 'js','concatJS', 'index', 'about');
+	runSequence('css', 'js','concatJS', 'index', 'about', 'watch');
 });
 
 gulp.task('scripts', function() {
+	
 	runSequence('js','concatJS');
+
+	return gulp.src(jsPath+'/'+jsFileName+'.min.js').pipe(livereload())
+
 });
 
-// gulp.task('watch', function() {
-// 	gulp.watch(scssPath+'/*.scss', ['css']);
-// 	gulp.watch(jsPath+'/'+jsFileName+'.js', ['scripts']);
-// });
+gulp.task('watch', function() {
+	livereload.listen();
+	gulp.watch(scssPath+'/*.scss', ['css']);
+	gulp.watch(jsPath+'/'+jsFileName+'.js', ['scripts']);
+	gulp.watch('index.html', ['html']);
+});
 
 gulp.task('default', ['general']);
