@@ -1,3 +1,102 @@
+/*
+
+	Gulp example
+
+	Welcome to configuration of Gulp example
+
+	Follow the instructions of theses differents options. Don't forget to use *npm install*. NodeJS is required
+
+	Description:
+	The createComment(data) method must return a new Comment node with its data set to data and node document set to the context object.
+
+	URL doc:
+	https://github.com/viclafouch/Gulpfile
+
+*/
+
+/*==============================================
+=            Gulpfile Configuration            =
+==============================================*/
+
+/* Assets */
+
+/* The Environment 
+@Options : {
+	true,
+	false
+}
+
+*/
+const inDev = true;
+
+/* Your Javascript library's name
+@Options : {
+	array of strings
+}
+
+!Be careful, library name is the name of the folder which contains differents files
+@Example of the path : lib/MyLib/script.js => ['MyLib']
+*/
+const libJs = [];
+
+/* Your assets folder path
+@Options : {
+	String
+}
+*/
+const assetsPath = 'assets';
+
+/* Your javascript lib folder's name
+@Options : {
+	String
+}
+*/
+const libName = 'lib';
+
+/* Your script file name
+@Options : {
+	String
+}
+*/
+const jsFileName = 'app';
+
+/* Your assets folder's name
+@Options : {
+	String
+}
+*/
+const jsFolder = 'js';
+const cssFolder = 'css';
+const scssFolder = 'scss';
+const imgFolder = 'img';
+
+/* About */
+
+/* Informations of the package.json
+@Options : {
+	{description: String, version: String, author: String}
+}
+*/
+var jsonData = {
+	'description': '',
+	'version': '',
+	'author': '' 
+}
+
+/* Some stuff */
+
+/* Using livereload ?
+@Options : {
+	true,
+	false
+}
+
+*/
+const autoRefresh = true;
+
+
+/*=====  End of Configuration  ======*/
+
 const gulp = require('gulp'),
 compass = require('gulp-compass'),
 autoprefixer = require('gulp-autoprefixer'),
@@ -8,6 +107,7 @@ sourcemaps = require('gulp-sourcemaps'),
 babel = require('gulp-babel'),
 livereload = require('gulp-livereload'),
 concat = require('gulp-concat'),
+gulpif = require('gulp-if'),
 about = require('gulp-about'),
 print = require('gulp-print'),
 inject = require('gulp-inject'),
@@ -19,37 +119,7 @@ mkdirp = require('mkdirp');
 
 runSequence.options.ignoreUndefinedTasks = true;
 
-livereload({ start: true })
-
-// Set true if you're in production
-const inProduction = false;
-
-// Your JS lib
-var libJs = [];
-
-// Your json package
-var jsonData = {
-	'description': '',
-	'version': '',
-	'author': '' 
-}
-
-// Your assets folder path
-var assetsPath = 'assets';
-
-// Your lib folder's name;
-const libName = 'lib';
-
-// Your script file name
-const jsFileName = 'app';
-
-// Your assets folder's name
-const jsFolder = 'js';
-const cssFolder = 'css';
-const scssFolder = 'scss';
-const imgFolder = 'img';
-
-/*=====  End of Configuration  ======*/
+livereload({ start: autoRefresh })
 
 // Instance path folder
 const jsPath = assetsPath+'/'+jsFolder;
@@ -98,16 +168,29 @@ gulp.task('css', function() {
 	    .pipe(print(function(filepath) {
 	      return "file created : " + filepath;
 	    }))
-		.pipe(autoprefixer('last 2 version', 'safari 5', 'ie 7', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
+		.pipe(autoprefixer(
+			'last 2 version', 
+			'safari 5', 
+			'ie 7', 
+			'ie 8', 
+			'ie 9', 
+			'opera 12.1', 
+			'ios 6', 
+			'android 4')
+		)
     	.pipe(gulp.dest(cssPath))
     	.pipe(rename({ suffix: '.min' }))
     	.pipe(cleanCSS({compatibility: 'ie8'}))
     	.pipe(gulp.dest(cssPath))
-    	.pipe(livereload());
+    	.pipe(gulpif(autoRefresh, livereload()));
 });
 
 gulp.task('about', function () {
-	fs.unlinkSync('about.json');
+	if (fs.existsSync('about.json')) {
+		fs.unlinkSync('about.json');
+	}
+	var t = new Date();
+	t = t.toString();
     return gulp.src('package.json')
         .pipe(about({
             keys: [
@@ -117,7 +200,7 @@ gulp.task('about', function () {
 	            'description'
             ],
             inject: {
-                buildDate: Date.now()
+                lastUpdate: t
             }
         }))
         .pipe(gulp.dest(''));
@@ -133,7 +216,7 @@ if (fs.existsSync(jsPath+'/'+jsFileName+'.js')) {
 	});
 }
 
-if (!inProduction) {
+if (!inDev) {
 	gulp.task('js', function() {
 		return gulp.src(jsPath+'/'+jsFileName+'.js')
 			.pipe(sourcemaps.init())
@@ -184,7 +267,7 @@ gulp.task('concatJS', function() {
 	gulp.src(scripts)
 		.pipe(concat(jsFileName+'.min.js'))
 		.pipe(gulp.dest(jsPath))
-		.pipe(livereload());
+		.pipe(gulpif(autoRefresh, livereload()));
 });
 
 gulp.task('jsonNew', () => {
@@ -194,7 +277,7 @@ gulp.task('jsonNew', () => {
     	'description': jsonData.description,
     	'author': jsonData.author,
   	}))
-  	.pipe(gulp.dest(""));
+  	.pipe(gulp.dest(''));
 }); 
 
 gulp.task('index', function () {
@@ -213,7 +296,7 @@ gulp.task('index', function () {
 gulp.task('html', function() {
     return gulp.src('index.html')
         .pipe(gulp.dest(''))
-        .pipe(livereload());
+        .pipe(gulpif(autoRefresh, livereload()));
 });
 
 gulp.task('general', function() {
@@ -229,7 +312,9 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('watch', function() {
-	livereload.listen();
+	if (autoRefresh) {
+		livereload.listen()
+	}
 	gulp.watch(scssPath+'/*.scss', ['css']);
 	gulp.watch(jsPath+'/'+jsFileName+'.js', ['scripts']);
 	gulp.watch('index.html', ['html']);
