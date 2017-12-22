@@ -39,7 +39,7 @@
 }
 
 */
-const inDev = false;
+const inDev = true;
 
 /* Your javascript lib folder's name
 @Options : {
