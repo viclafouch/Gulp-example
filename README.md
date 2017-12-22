@@ -48,6 +48,7 @@ Here is the list of the gulp plugins used :
 * [gulp-rename](https://github.com/hparra/gulp-rename)
 * [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
 * [gulp-uglify](https://github.com/terinjokes/gulp-uglify)
+* [gulp-webserver](https://github.com/schickling/gulp-webserver)
 * [gulp-util](https://github.com/gulpjs/gulp-util)
 * [run-sequence](https://www.npmjs.com/package/run-sequence)
 
@@ -147,9 +148,9 @@ Define your img folder name.
 
 - Type: `Object`
 - Options:
-  - `'description'`: '' => `String`
-  - `'version'`: '' => `String`
-  - `'author'`: '' => `String`
+  - `'description'`: `` => `String`
+  - `'version'`: `` => `String`
+  - `'author'`: `` => `String`
 
 Define your img folder name.
 
