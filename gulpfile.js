@@ -8,19 +8,26 @@
 
 	NodeJS, Ruby and Compass are required.
 
-	Please be sure to have these 4 requirements
+	## Please be sure to have these 4 requirements
 
-		- Install Gulp : 
+		- Install Gulp : https://gulpjs.com/
 		- Install NodeJs : https://nodejs.org/en/download/
 		- Install Ruby : https://www.ruby-lang.org/en/downloads/
 		- Install Compass : http://compass-style.org/install/
 
-		If you want to have an autorefresh on your browser, you need livereload
+		If you want to have an autorefresh on your browser (very useful), you will need livereload.
 		==> http://livereload.com/extensions/ and choose your browser
 
-	Description:
+	## Description:
 
-	In your command prompt, run : gulp
+	This example of Gulpfile will allow you to create your own autonomous project to facilitate several tasks
+	tasks : concatenation of files, compression and minification, auto-refresh and auto-prefix for your css.
+
+	## Command
+
+	In your command prompt, Run : gulp
+
+	## Doc
 
 	URL doc: https://github.com/viclafouch/Gulpfile
 
@@ -41,12 +48,16 @@
 */
 const inDev = true;
 
+
+
 /* Your javascript lib folder's name
 @Options : {
 	String
 }
 */
 const libName = 'lib';
+
+
 
 /* Your Javascript library's name
 @Options : {
@@ -58,6 +69,8 @@ const libName = 'lib';
 */
 const libJs = [];
 
+
+
 /* Your assets folder path
 @Options : {
 	String
@@ -65,12 +78,16 @@ const libJs = [];
 */
 const assetsPath = 'assets';
 
+
+
 /* Your script file name
 @Options : {
 	String
 }
 */
 const jsFileName = 'app';
+
+
 
 /* Your assets folder's name
 @Options : {
@@ -82,6 +99,8 @@ const cssFolder = 'css';
 const scssFolder = 'scss';
 const imgFolder = 'img';
 
+
+
 /* About */
 
 /* Informations about the package.json
@@ -91,9 +110,11 @@ const imgFolder = 'img';
 */
 var jsonData = {
 	'description': '',
-	'version': '',
+	'version': '1.0',
 	'author': '' 
 }
+
+
 
 /* Some stuff */
 
@@ -188,8 +209,9 @@ if (fs.existsSync(scssPath+'/styles.scss')) {
 	});
 }
 
-/*=====  Gulp  ======*/
+/*=====  Gulp Tasks ======*/
 
+// Clean CSS, autoprefix and remove comments
 gulp.task('css', function() {
 	return gulp.src([scssPath+'/*.scss'])
 		.pipe(compass({
@@ -225,6 +247,7 @@ gulp.task('css', function() {
     	.pipe(gulpif(autoRefresh, livereload()));
 });
 
+// Creat a file which contains multiple informations (version, name...)
 gulp.task('about', function () {
 	if (fs.existsSync('about.json')) {
 		fs.unlinkSync('about.json');
@@ -248,6 +271,7 @@ gulp.task('about', function () {
         .pipe(gulp.dest(''));
 });
 
+// Creat the script file
 if (fs.existsSync(jsPath+'/'+jsFileName+'.js')) {
     // Do something
 } else {
@@ -258,6 +282,7 @@ if (fs.existsSync(jsPath+'/'+jsFileName+'.js')) {
 	});
 }
 
+// For production (babel and uglify)
 if (!inDev) {
 	gulp.task('js', function() {
 		return gulp.src(jsPath+'/'+jsFileName+'.js')
@@ -282,6 +307,7 @@ if (!inDev) {
 	});
 }
 
+// For !production (do nothing)
 else {
 	gulp.task('js', function() {
 		return gulp.src(jsPath+'/'+jsFileName+'.js')
@@ -311,6 +337,7 @@ for (var i = 0; i < libJs.length; i++) {
 	});
 }
 
+// Concat all library files with your app script
 gulp.task('concatJS', function() {
 	gulp.src(scripts)
 		.pipe(concat(jsFileName+'.min.js'))
@@ -318,6 +345,7 @@ gulp.task('concatJS', function() {
 		.pipe(gulpif(autoRefresh, livereload()));
 });
 
+// Edit package.json
 gulp.task('jsonNew', () => {
 	gulp.src("package.json")
   	.pipe(jeditor({
