@@ -148,7 +148,8 @@ gutil = require('gulp-util'),
 jeditor = require("gulp-json-editor"),
 runSequence = require('run-sequence'),
 fs = require('fs'),
-mkdirp = require('mkdirp');
+mkdirp = require('mkdirp'),
+webserver = require('gulp-webserver');
 
 runSequence.options.ignoreUndefinedTasks = true;
 
@@ -337,6 +338,15 @@ for (var i = 0; i < libJs.length; i++) {
 	});
 }
 
+gulp.task('webserver', function() {
+  gulp.src('./')
+    .pipe(webserver({
+      livereload: true,
+      open: true,
+      fallback: 'index.html'
+    }));
+});
+
 // Concat all library files with your app script
 gulp.task('concatJS', function() {
 	gulp.src(scripts)
@@ -383,6 +393,7 @@ gulp.task('general', function() {
 		'index', 
 		'jsonNew', 
 		'about', 
+		'webserver',
 		'watch'
 	);
 });
