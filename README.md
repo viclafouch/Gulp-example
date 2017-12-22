@@ -12,17 +12,48 @@ Example of a gulpfile which build your own project (good for beginners).
 <td>Node Version</td>
 <td>>= 0.10</td>
 </tr>
+<tr>
+<td>Ruby Version</td>
+<td>>= 2.0</td>
+</tr>
+<tr>
+<td>Compass</td>
+<td>>= 1.0.1</td>
+</tr>
 </table>
 
 ## Description
 
 This example of Gulpfile will allow you to create your own autonomous project to facilitate several tasks: concatenation of files, compression and minification, auto-refresh and auto-prefix for your css.
 
-A simple configuration file : gulpfile.js
+A simple configuration file : **gulpfile.js**
+
+![demo](https://im3.ezgif.com/tmp/ezgif-3-27a8b62689.gif)
+
+Here is the list of the gulp plugins used : 
+
+* [babel-core](https://github.com/babel/babel/tree/master/packages/babel-core)
+* [babel-preset-es2015](https://github.com/babel/babel/tree/master/packages/babel-preset-es2015)
+* [browserslist](https://github.com/ai/browserslist)
+* [gulp-about](https://github.com/michaelbazos/gulp-about)
+* [gulp-autoprefixer](https://github.com/sindresorhus/gulp-autoprefixer)
+* [gulp-babel](https://github.com/babel/gulp-babel)
+* [gulp-clean-css](https://github.com/scniro/gulp-clean-css)
+* [gulp-concat](https://github.com/contra/gulp-concat)
+* [gulp-if](https://github.com/robrich/gulp-if)
+* [gulp-inject](https://github.com/klei/gulp-inject)
+* [gulp-json-editor](https://github.com/morou/gulp-json-editor)
+* [gulp-livereload](https://github.com/vohof/gulp-livereload)
+* [gulp-print](https://github.com/alexgorbatchev/gulp-print)
+* [gulp-rename](https://github.com/hparra/gulp-rename)
+* [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
+* [gulp-uglify](https://github.com/terinjokes/gulp-uglify)
+* [gulp-util](https://github.com/gulpjs/gulp-util)
+* [run-sequence](https://www.npmjs.com/package/run-sequence)
 
 ## Usage
 
-4 requirement are necessary to use Gulp-example : Gulp, NodeJS, Ruby and Compass are required.
+4 requirements are necessary to use Gulp-example : Gulp, NodeJS, Ruby and Compass are required.
 
 * Gulp : https://gulpjs.com/
 * NodeJs : https://nodejs.org/en/download/
@@ -66,9 +97,9 @@ Define your library folder name.
 
 Include all your js library.
 
-**Note:** Be careful, It hase to be the name of the folder which contains the differents js files.
+**Note:** Be careful, It has to be the name of the folder which contains the differents js files.
 <br/>
-**@Example of the path** :  `lib/MyLib/script.js ` **=>** `['MyLib']`
+**Example of a path** :  `lib/MyLib/script.js` **=>** `['MyLib']`
 
 ### assetsPath
 
