@@ -28,7 +28,7 @@ This example of Gulpfile will allow you to create your own autonomous project to
 
 A simple configuration file : **gulpfile.js**
 
-![demo](https://im3.ezgif.com/tmp/ezgif-3-27a8b62689.gif)
+![demo](https://im3.ezgif.com/tmp/ezgif-3-4cfbdb0f0c.gif)
 
 Here is the list of the gulp plugins used : 
 
@@ -48,6 +48,7 @@ Here is the list of the gulp plugins used :
 * [gulp-rename](https://github.com/hparra/gulp-rename)
 * [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
 * [gulp-uglify](https://github.com/terinjokes/gulp-uglify)
+* [gulp-webserver](https://github.com/schickling/gulp-webserver)
 * [gulp-util](https://github.com/gulpjs/gulp-util)
 * [run-sequence](https://www.npmjs.com/package/run-sequence)
 
@@ -147,9 +148,9 @@ Define your img folder name.
 
 - Type: `Object`
 - Options:
-  - `'description'`: '' => `String`
-  - `'version'`: '' => `String`
-  - `'author'`: '' => `String`
+  - `'description'`: `` => `String`
+  - `'version'`: `` => `String`
+  - `'author'`: `` => `String`
 
 Define your img folder name.
 
