@@ -148,7 +148,9 @@ gutil = require('gulp-util'),
 jeditor = require("gulp-json-editor"),
 runSequence = require('run-sequence'),
 fs = require('fs'),
-mkdirp = require('mkdirp');
+mkdirp = require('mkdirp'),
+gitignore = require('gulp-gitignore'),
+webserver = require('gulp-webserver');
 
 runSequence.options.ignoreUndefinedTasks = true;
 
@@ -375,6 +377,23 @@ gulp.task('html', function() {
         .pipe(gulpif(autoRefresh, livereload()));
 });
 
+gulp.task('gitignore', function () {
+    return gulp.src('')
+        // exclude files defined in .gitignore 
+        .pipe(gitignore('/template'))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('webserver', function() {
+  gulp.src('./')
+    .pipe(webserver({
+      livereload: true,
+      // directoryListing: true,
+      open: true,
+      fallback: 'index.html'
+    }));
+});
+
 gulp.task('general', function() {
 	runSequence(
 		'css', 
@@ -382,7 +401,9 @@ gulp.task('general', function() {
 		'concatJS', 
 		'index', 
 		'jsonNew', 
-		'about', 
+		'about',
+		'webserver',
+		'gitignore',
 		'watch'
 	);
 });
