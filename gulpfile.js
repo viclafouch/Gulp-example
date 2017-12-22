@@ -341,7 +341,7 @@ for (var i = 0; i < libJs.length; i++) {
 gulp.task('webserver', function() {
   gulp.src('./')
     .pipe(webserver({
-      livereload: true,
+      livereload: autoRefresh,
       open: true,
       fallback: 'index.html'
     }));
