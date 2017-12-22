@@ -34,8 +34,4 @@
     "mkdirp": "^0.5.1",
     "run-sequence": "^2.0.0"
   },
-  "version": "",
-  "bugs.url": "test",
-  "bugs[0]": "test",
-  "bugs.url=": "/test"
 }

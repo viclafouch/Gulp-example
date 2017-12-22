@@ -8,8 +8,9 @@
 
 	NodeJS, Ruby and Compass are required.
 
-	Please be sure to have these 3 requirements
+	Please be sure to have these 4 requirements
 
+		- Install Gulp : 
 		- Install NodeJs : https://nodejs.org/en/download/
 		- Install Ruby : https://www.ruby-lang.org/en/downloads/
 		- Install Compass : http://compass-style.org/install/
@@ -18,6 +19,8 @@
 		==> http://livereload.com/extensions/ and choose your browser
 
 	Description:
+
+	In your command prompt, run : gulp
 
 	URL doc: https://github.com/viclafouch/Gulpfile
 
@@ -81,7 +84,7 @@ const imgFolder = 'img';
 
 /* About */
 
-/* Informations of the package.json
+/* Informations about the package.json
 @Options : {
 	{description: String, version: String, author: String}
 }
@@ -94,7 +97,7 @@ var jsonData = {
 
 /* Some stuff */
 
-/* Using livereload ?
+/* Use livereload ? (Browser extension is required)
 @Options : {
 	true,
 	false
@@ -163,7 +166,7 @@ for (var i = paths.length - 1; i >= 0; i--) {
 }
 
 
-var logSuccess = text => {
+var logSuccess = (text) => {
 	gutil.log('--------------------');
 	gutil.log(gutil.colors.green(text));
 	gutil.log('--------------------');
@@ -263,8 +266,8 @@ if (!inDev) {
 	            presets: ['es2015']
 	        }))
 	        .on('error', (err) => {
-		      logError('An error occurred during compressed js', err.message);
-		      this.emit('end');
+	        	logError('An error occurred during compressed js', err.message);
+	        	this.emit('end');
 		    })
 			.pipe(uglify()
 			.on('error', function(err){
@@ -274,7 +277,7 @@ if (!inDev) {
 			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(jsPath))
 			.pipe(print(function(filepath) {
-		      logSuccess('file created : '+filepath);
+				logSuccess('file created : '+filepath);
 		    }))
 	});
 }
@@ -345,12 +348,23 @@ gulp.task('html', function() {
 });
 
 gulp.task('general', function() {
-	runSequence('css', 'js','concatJS', 'index', 'jsonNew', 'about', 'watch');
+	runSequence(
+		'css', 
+		'js',
+		'concatJS', 
+		'index', 
+		'jsonNew', 
+		'about', 
+		'watch'
+	);
 });
 
 gulp.task('scripts', function() {
 	
-	runSequence('js','concatJS');
+	runSequence(
+		'js',
+		'concatJS'
+	);
 
 	return gulp.src(jsPath+'/'+jsFileName+'.min.js').pipe(livereload())
 
