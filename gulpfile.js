@@ -36,7 +36,7 @@
 }
 
 */
-const inDev = true;
+const inDev = false;
 
 /* Your javascript lib folder's name
 @Options : {
@@ -141,34 +141,46 @@ const paths = [jsPath, cssPath, scssPath, imgPath];
 // Creat assets' folder
 mkdirp(assetsPath, function(err) {
 	if (err) {
- 		gutil.log('An error occurred during creation of folder !');
- 		gutil.log('----------Error below----------');
- 		gutil.log(err);
+ 		logError('An error occurred during creation of folder !', err);
 	}
 });
 
 mkdirp('lib', function(err) {});
 
+
 // Creat subFolders to assets folder
 for (var i = paths.length - 1; i >= 0; i--) {
-	mkdirp(paths[i], function(err) { 
-		if (err) {
-	 		gutil.log('An error occurred during creation of folder !');
-	 		gutil.log('----------Error below----------');
-	 		gutil.log(err);
-		}
-	});
+	var t = paths[i];
+	if (!fs.existsSync(t)) {
+		mkdirp(t, function(err, t) {
+			if (err) {
+		 		logError('An error occurred during creation of folder !', err);
+			} else {
+				logSuccess('folder created :'+t);
+			}
+		});
+	}
 }
 
+
+var logSuccess = text => {
+	gutil.log('--------------------');
+	gutil.log(gutil.colors.green(text));
+	gutil.log('--------------------');
+}
+
+var logError = (text, err) => {
+	gutil.log(gutil.colors.red(text));
+	gutil.log(gutil.colors.red('----------Error below----------'));
+	gutil.log(gutil.colors.red(err));
+}
 
 if (fs.existsSync(scssPath+'/styles.scss')) {
     // Do something
 } else {
 	fs.writeFile(scssPath+'/styles.scss', "", function(err) {
 	    if (err) {
-	 		gutil.log('An error occurred during creation of scss file !');
-	 		gutil.log('----------Error below----------');
-	 		gutil.log(err);
+	 		logError('An error occurred during creation of scss file !', err);
 		}
 	});
 }
@@ -180,15 +192,18 @@ gulp.task('css', function() {
 		.pipe(compass({
 		 	css: cssPath,
 			sass: scssPath,
+			logging: false,
+			import_path: false,
+			time: true,
+			comments: false,
+			style: 'compressed'
 		}))
 		.on('error', function(err) {
-	    	gutil.log('An error occurred during compress to css file !');
-	 		gutil.log('----------Error below----------');
-	 		gutil.log(err);
+	 		logError('An error occurred during compress to css file !', err.message+ ' : error in your file !');
 	      	this.emit('end');
 	    })
 	    .pipe(print(function(filepath) {
-	      return "file created : " + filepath;
+	    	logSuccess('file created : '+filepath);
 	    }))
 		.pipe(autoprefixer(
 			'last 2 version', 
@@ -211,7 +226,7 @@ gulp.task('about', function () {
 	if (fs.existsSync('about.json')) {
 		fs.unlinkSync('about.json');
 	}
-	
+
 	var t = new Date();
 	t = t.toString();
 
@@ -235,9 +250,7 @@ if (fs.existsSync(jsPath+'/'+jsFileName+'.js')) {
 } else {
 	fs.writeFile(jsPath+'/'+jsFileName+'.js', "// Script app", function(err) {
 	    if(err) {
-	        gutil.log('An error occurred during creation of js file !');
-	 		gutil.log('----------Error below----------');
-	 		gutil.log(err);
+	 		logError('An error occurred during creation of js file !', err);
 	    }
 	});
 }
@@ -249,15 +262,19 @@ if (!inDev) {
 	 		.pipe(babel({
 	            presets: ['es2015']
 	        }))
-			.pipe(uglify().on('error', function(err){
-	         	gutil.log('An error occurred during compressed js');
-	 			gutil.log('----------Error below----------');
-	 			gutil.log(err);
+	        .on('error', (err) => {
+		      logError('An error occurred during compressed js', err.message);
+		      this.emit('end');
+		    })
+			.pipe(uglify()
+			.on('error', function(err){
+	 			logError('An error occurred during compressed js', err);
+	 			this.emit('end');
 		    }))
 			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(jsPath))
 			.pipe(print(function(filepath) {
-		      return "file created : " + filepath;
+		      logSuccess('file created : '+filepath);
 		    }))
 	});
 }
@@ -269,7 +286,7 @@ else {
 			.pipe(rename({ suffix: '.min' }))
 			.pipe(gulp.dest(jsPath))
 			.pipe(print(function(filepath) {
-		      return "file created : " + filepath;
+		      logSuccess('file created : '+filepath);
 		    }))
 	});
 }
@@ -280,7 +297,7 @@ for (var i = 0; i < libJs.length; i++) {
 	x = libJs[i];
 	fs.access(libName+'/'+x, fs.constants.R_OK | fs.constants.W_OK, (err) => {
 		if (err) {
-			gutil.log('Library '+x+' doesn\'t exist '+err.path);
+			logError('Library '+x+' doesn\'t exist '+err.path, err)
 		} else {
 			scripts.push(libName+'/'+x+'/*.js');
 		}
