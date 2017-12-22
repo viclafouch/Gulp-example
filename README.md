@@ -2,7 +2,7 @@
 
 Example of a gulpfile which build your own project (good for beginners).
 
-## Information
+## Informations
 
 <table>
 <td>Description</td>
@@ -54,7 +54,7 @@ Here is the list of the gulp plugins used :
 
 ## Usage
 
-4 requirements are necessary to use Gulp-example : Gulp, NodeJS, Ruby and Compass are required.
+4 requirements are necessary to use Gulp-example : **Gulp**, **NodeJS**, **Ruby** and **Compass** are required.
 
 * Gulp : https://gulpjs.com/
 * NodeJs : https://nodejs.org/en/download/
@@ -64,7 +64,7 @@ Here is the list of the gulp plugins used :
 If you want to have an autorefresh on your browser, you need livereload
 * http://livereload.com/extensions/ and choose your browser.
 
-After clone the project, run these commands bellow :  
+After cloning the project, run these commands bellow :  
 
 ```
 npm install
@@ -79,7 +79,7 @@ gulp
 ### inDev
 
 - Type: `Boolean`
-- Default: `false`
+- Default: `true`
 
 Define your environment.
 
@@ -114,7 +114,7 @@ Define your assets folder name.
 - Type: `String`
 - Default: `app`
 
-Define the name of the script file. All of library that you included will be there (with your script).
+Define the name of the script file. All of the libraries that you included will be there (with your script).
 
 ### jsFolder
 
@@ -152,7 +152,7 @@ Define your img folder name.
   - `'version'`: `` => `String`
   - `'author'`: `` => `String`
 
-Define your img folder name.
+Define some information about your project.
 
 ### autoRefresh
 
