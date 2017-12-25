@@ -110,7 +110,6 @@ const imgFolder = 'img';
 */
 var jsonData = {
 	'description': '',
-	'version': '1.0',
 	'author': '' 
 }
 
@@ -359,7 +358,6 @@ gulp.task('concatJS', function() {
 gulp.task('jsonNew', () => {
 	gulp.src("package.json")
   	.pipe(jeditor({
-    	'version': jsonData.version,
     	'description': jsonData.description,
     	'author': jsonData.author,
   	}))
