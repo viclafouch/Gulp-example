@@ -28,7 +28,7 @@ This example of Gulpfile will allow you to create your own autonomous project to
 
 A simple configuration file : **gulpfile.js**
 
-![demo](https://www.victor-de-la-fouchardiere.fr/github/gulp-example.gif)
+![demo](https://cdn.rawgit.com/viclafouch/Gulp-example/138951f9/gulp-example.gif)
 
 Here is the list of the gulp plugins used : 
 
